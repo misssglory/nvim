@@ -19,4 +19,5 @@ return {
     "ojroques/vim-oscyank",
     "kkoomen/vim-doge",
     "captbaritone/better-indent-support-for-php-with-html",
+    "numToStr/Comment.nvim"
 }

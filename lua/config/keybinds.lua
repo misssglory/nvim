@@ -64,3 +64,12 @@ vim.keymap.set("n", "<leader>mm", "<cmd>make<CR>")
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
+
+-- Setup hotkeys
+vim.keymap.set('n', '<leader>/', function()
+    require('Comment.api').toggle.linewise.current()
+end, { noremap = true, silent = true })
+
+vim.keymap.set('v', '<leader>/', function()
+    require('Comment.api').toggle.linewise(vim.fn.visualmode())
+end, { noremap = true, silent = true })

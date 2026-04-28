@@ -1,3 +1,4 @@
+-- lua/manage.lua (original version without wff)
 local M = {}
 local plug_dir = vim.fn.stdpath("data") .. "/plugins"
 

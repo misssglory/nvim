@@ -1,13 +1,13 @@
+-- lua/plugin-list.lua - WITHOUT wff entry
 return {
     "nvim-lua/plenary.nvim",
     "nvim-tree/nvim-web-devicons",
-    { "nvim-treesitter/nvim-treesitter", branch = "master" },
+    { "nvim-treesitter/nvim-treesitter",             branch = "master" },
     { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
     "nvim-treesitter/nvim-treesitter-context",
-    "hrsh7th/nvim-cmp",
-    "hrsh7th/cmp-nvim-lsp",
-    "hrsh7th/cmp-path",
-    "hrsh7th/cmp-buffer",
+
+    { "saghen/blink.cmp",     branch = "v1" },
+
     "nvim-telescope/telescope.nvim",
     { "ThePrimeagen/harpoon", branch = "harpoon2" },
     "folke/tokyonight.nvim",
@@ -19,5 +19,6 @@ return {
     "ojroques/vim-oscyank",
     "kkoomen/vim-doge",
     "captbaritone/better-indent-support-for-php-with-html",
-    "numToStr/Comment.nvim"
+    "numToStr/Comment.nvim",
+    -- wff is not a plugin to clone - it's a system binary
 }

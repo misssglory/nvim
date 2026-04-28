@@ -22,6 +22,10 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 -- add binds for Control J/K to scroll thru quickfix list
 vim.keymap.set("n", "<C-j>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-k>", "<cmd>cprev<CR>zz")
+vim.keymap.set("n", "<leader>xq", function()
+    -- workspace-wide diagnostics into quickfix
+    vim.diagnostic.setqflist({ open = true })
+end, { desc = "Diagnostics → quickfix" })
 
 -- What the heck is Ex mode?
 vim.keymap.set("n", "Q", "<nop>")
@@ -49,6 +53,11 @@ vim.keymap.set('v', '<leader>y', '<Plug>OSCYankVisual')
 vim.keymap.set("n", "<leader>rl", "<cmd>source ~/.config/nvim/init.lua<cr>")
 
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+
+vim.keymap.set("n", "<leader>yq", function()
+    vim.cmd("normal! ggVGy") -- or ggVG\"+y if you don't use unnamedplus
+    vim.cmd("q!")
+end, { silent = true })
 
 -- Quickfix list stuff
 vim.keymap.set("n", "<leader>cl", ":cclose<CR>", { silent = true })

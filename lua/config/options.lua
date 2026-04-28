@@ -1,6 +1,8 @@
 -- OPTIONS
 local set = vim.opt
 
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+vim.opt.pumheight = 10
 --line nums
 set.relativenumber = true
 set.number = true

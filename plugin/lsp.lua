@@ -66,7 +66,26 @@ vim.api.nvim_create_autocmd("LspAttach", {
         map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto declaration" })
         map("n", "gi", vim.lsp.buf.implementation, { desc = "Goto implementation" })
         map("n", "go", vim.lsp.buf.type_definition, { desc = "Goto type definition" })
-        map("n", "gr", vim.lsp.buf.references, { desc = "References" })
+        map("n", "gr", function()
+            vim.lsp.buf.references(nil, {
+                on_list = function(opts)
+                    if not opts or not opts.items or #opts.items == 0 then
+                        vim.notify("No references", vim.log.levels.INFO)
+                        return
+                    end
+
+                    -- Fill quickfix with the references
+                    vim.fn.setqflist({}, " ", opts)
+
+                    -- Jump to first reference
+                    vim.cmd("cc 1")
+                    -- Center the cursor
+                    vim.cmd("normal! zz")
+                    -- Close quickfix window
+                    vim.cmd("cclose")
+                end,
+            })
+        end, { desc = "References (jump + close)" })
         map("n", "gs", vim.lsp.buf.signature_help, { desc = "Signature help" })
         map("n", "gl", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 

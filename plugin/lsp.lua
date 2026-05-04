@@ -74,14 +74,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
                         return
                     end
 
-                    -- Fill quickfix with the references
                     vim.fn.setqflist({}, " ", opts)
-
-                    -- Jump to first reference
                     vim.cmd("cc 1")
-                    -- Center the cursor
                     vim.cmd("normal! zz")
-                    -- Close quickfix window
                     vim.cmd("cclose")
                 end,
             })

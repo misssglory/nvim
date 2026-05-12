@@ -1,4 +1,6 @@
--- plugin/lsp.lua
+-- map("n", "gr", vim.lsp.buf.references, { desc = "References" })
+
+local has_telescope, builtin = pcall(require, "telescope.builtin")
 
 vim.lsp.config("*", {
     root_markers = { ".git" },
@@ -50,6 +52,7 @@ local lsp_group = vim.api.nvim_create_augroup("my.lsp", { clear = true })
 local lsp_highlight_group = vim.api.nvim_create_augroup("my.lsp.highlight", { clear = false })
 local lsp_format_group = vim.api.nvim_create_augroup("my.lsp.format", { clear = false })
 
+
 vim.api.nvim_create_autocmd("LspAttach", {
     group = lsp_group,
     callback = function(ev)
@@ -62,13 +65,42 @@ vim.api.nvim_create_autocmd("LspAttach", {
         end
 
         map("n", "K", vim.lsp.buf.hover, { desc = "LSP Hover" })
-        map("n", "gd", vim.lsp.buf.definition, { desc = "Goto definition" })
+
+        if has_telescope then
+            map("n", "gd", builtin.lsp_definitions, { desc = "LSP Definitions (Telescope)" })
+            map("n", "gi", builtin.lsp_implementations, { desc = "LSP Implementations (Telescope)" })
+            map("n", "gr", builtin.lsp_references, { desc = "LSP References (Telescope)" })
+        else
+            map("n", "gd", vim.lsp.buf.definition, { desc = "Goto definition" })
+            map("n", "gi", vim.lsp.buf.implementation, { desc = "Goto implementation" })
+            map("n", "gr", vim.lsp.buf.references, { desc = "References" })
+        end
+
         map("n", "gD", vim.lsp.buf.declaration, { desc = "Goto declaration" })
-        map("n", "gi", vim.lsp.buf.implementation, { desc = "Goto implementation" })
         map("n", "go", vim.lsp.buf.type_definition, { desc = "Goto type definition" })
-        map("n", "gr", vim.lsp.buf.references, { desc = "References" })
         map("n", "gs", vim.lsp.buf.signature_help, { desc = "Signature help" })
         map("n", "gl", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+
+        map("n", "<leader>xq", function()
+            vim.diagnostic.setqflist({ open = false })
+            if has_telescope then
+                builtin.quickfix()
+            else
+                vim.cmd("copen")
+            end
+        end, { desc = "Diagnostics → quickfix" })
+
+        map("n", "<leader>xe", function()
+            vim.diagnostic.setqflist({
+                open = false,
+                severity = vim.diagnostic.severity.ERROR,
+            })
+            if has_telescope then
+                builtin.quickfix()
+            else
+                vim.cmd("copen")
+            end
+        end, { desc = "Errors → quickfix" })
 
         map("n", "]d", function()
             vim.diagnostic.jump({ count = 1, float = true })
@@ -84,17 +116,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
         end, { desc = "Format buffer" })
         map("n", "<F4>", vim.lsp.buf.code_action, { desc = "Code action" })
         map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-
-        map("n", "<leader>xq", function()
-            vim.diagnostic.setqflist({ open = true })
-        end, { desc = "Diagnostics → quickfix" })
-
-        map("n", "<leader>xe", function()
-            vim.diagnostic.setqflist({
-                open = true,
-                severity = vim.diagnostic.severity.ERROR,
-            })
-        end, { desc = "Errors → quickfix" })
 
         map("n", "<leader>xx", function()
             vim.diagnostic.setloclist({ open = true })

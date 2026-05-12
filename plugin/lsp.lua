@@ -89,6 +89,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
             vim.diagnostic.setqflist({ open = true })
         end, { desc = "Diagnostics → quickfix" })
 
+        map("n", "<leader>xe", function()
+            vim.diagnostic.setqflist({
+                open = true,
+                severity = vim.diagnostic.severity.ERROR,
+            })
+        end, { desc = "Errors → quickfix" })
+
         map("n", "<leader>xx", function()
             vim.diagnostic.setloclist({ open = true })
         end, { desc = "Diagnostics → loclist" })

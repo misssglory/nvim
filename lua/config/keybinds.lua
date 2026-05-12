@@ -82,3 +82,14 @@ end, { noremap = true, silent = true })
 vim.keymap.set('v', '<leader>/', function()
     require('Comment.api').toggle.linewise(vim.fn.visualmode())
 end, { noremap = true, silent = true })
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "qf",
+    callback = function(ev)
+        vim.keymap.set("n", "<CR>", function()
+            -- use the default action (jump to entry) then close quickfix
+            vim.cmd("execute 'normal! <CR>'")
+            vim.cmd("cclose")
+        end, { buffer = ev.buf, silent = true })
+    end,
+})

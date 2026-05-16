@@ -47,44 +47,38 @@ local function open_fff_files_or_telescope()
     builtin.find_files()
 end
 
-local function open_fff_git_root_or_telescope()
-    local ok, fff = pcall(require, "fff")
-    if ok and fff and fff.find_in_git_root then
-        local call_ok, err = pcall(fff.find_in_git_root)
-        if call_ok then
-            return
-        end
-        vim.notify("fff git-root picker failed, falling back to Telescope: " .. tostring(err), vim.log.levels.WARN)
-    end
-
-    builtin.grep_string({})
-end
-
+-- FFF for files
 vim.keymap.set("n", "<leader>ff", open_fff_files_or_telescope, {
-    desc = "Find files (FFF fallback Telescope)",
+    desc = "Find files (FFF, fallback Telescope)",
 })
 
+-- Oldfiles, buffers, etc
 vim.keymap.set("n", "<leader>fo", builtin.oldfiles)
 vim.keymap.set("n", "<leader>fq", builtin.quickfix)
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
 
+-- Whole-repo text search using rg
+vim.keymap.set("n", "<leader>fs", function()
+    builtin.live_grep({})
+end, { desc = "Search text in project (rg)" })
+
+-- Prompted grep
 vim.keymap.set("n", "<leader>fg", function()
     builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end)
 
+-- Grep for current filename stem
 vim.keymap.set("n", "<leader>fc", function()
     builtin.grep_string({ search = vim.fn.expand("%:t:r") })
-end, { desc = "Find current file" })
+end, { desc = "Find current file name" })
 
-vim.keymap.set("n", "<leader>fs", open_fff_git_root_or_telescope, {
-    desc = "Find in git root (FFF fallback Telescope)",
-})
-
+-- Config files
 vim.keymap.set("n", "<leader>fi", function()
     builtin.find_files({ cwd = "~/.config/nvim/" })
 end)
 
+-- WFF bindings (unchanged)
 vim.keymap.set("n", "<leader>fw", function()
     local telescope = require("telescope")
     if telescope.extensions and telescope.extensions.wff and telescope.extensions.wff.wff then

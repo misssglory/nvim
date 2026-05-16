@@ -15,7 +15,6 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
-
 -- sometimes in insert mode, control-c doesn't exactly work like escape
 vim.keymap.set("i", "<C-c>", "<Esc>")
 
@@ -23,7 +22,6 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "<C-j>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-k>", "<cmd>cprev<CR>zz")
 vim.keymap.set("n", "<leader>xq", function()
-    -- workspace-wide diagnostics into quickfix
     vim.diagnostic.setqflist({ open = true })
 end, { desc = "Diagnostics → quickfix" })
 
@@ -46,8 +44,8 @@ vim.keymap.set("n", "<leader>s", [[:s/\<<C-r><C-w>\>//gI<Left><Left><Left>]])
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 -- yank into clipboard even if on ssh
-vim.keymap.set('n', '<leader>y', '<Plug>OSCYankOperator')
-vim.keymap.set('v', '<leader>y', '<Plug>OSCYankVisual')
+vim.keymap.set("n", "<leader>y", "<Plug>OSCYankOperator")
+vim.keymap.set("v", "<leader>y", "<Plug>OSCYankVisual")
 
 -- reload without exiting vim
 vim.keymap.set("n", "<leader>rl", "<cmd>source ~/.config/nvim/init.lua<cr>")
@@ -55,7 +53,7 @@ vim.keymap.set("n", "<leader>rl", "<cmd>source ~/.config/nvim/init.lua<cr>")
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
 vim.keymap.set("n", "<leader>yq", function()
-    vim.cmd("normal! ggVGy") -- or ggVG\"+y if you don't use unnamedplus
+    vim.cmd("normal! ggVGy")
     vim.cmd("q!")
 end, { silent = true })
 
@@ -74,20 +72,14 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
 
--- Setup hotkeys
-vim.keymap.set('n', '<leader>/', function()
-    require('Comment.api').toggle.linewise.current()
-end, { noremap = true, silent = true })
-
-vim.keymap.set('v', '<leader>/', function()
-    require('Comment.api').toggle.linewise(vim.fn.visualmode())
-end, { noremap = true, silent = true })
+-- commentary: use native gc/gcc behavior
+vim.keymap.set("n", "<leader>/", "gcc", { remap = true, desc = "Toggle comment line" })
+vim.keymap.set("x", "<leader>/", "gc", { remap = true, desc = "Toggle comment selection" })
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     callback = function(ev)
         vim.keymap.set("n", "<CR>", function()
-            -- use the default action (jump to entry) then close quickfix
             vim.cmd("execute 'normal! <CR>'")
             vim.cmd("cclose")
         end, { buffer = ev.buf, silent = true })

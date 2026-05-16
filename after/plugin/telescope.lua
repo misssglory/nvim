@@ -13,10 +13,8 @@ require("telescope").setup({
     },
 })
 
--- Load wff extension with better error handling
 local function load_wff_extension()
     local ok, err = pcall(function()
-        -- Ensure the extension file is loaded
         local wff_ext = require("telescope._extensions.wff")
         if wff_ext and wff_ext.name == "wff" then
             vim.schedule(function()
@@ -24,9 +22,10 @@ local function load_wff_extension()
             end)
         end
     end)
+
     if not ok then
         vim.schedule(function()
-            vim.notify("Failed to load wff extension: " .. tostring(err), vim.log.levels.ERROR)
+            vim.notify("Failed to load WFF extension: " .. tostring(err), vim.log.levels.ERROR)
         end)
     end
 end
@@ -34,32 +33,63 @@ end
 load_wff_extension()
 
 local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files)
+
+local function open_fff_files_or_telescope()
+    local ok, fff = pcall(require, "fff")
+    if ok and fff and fff.find_files then
+        local call_ok, err = pcall(fff.find_files)
+        if call_ok then
+            return
+        end
+        vim.notify("fff find_files failed, falling back to Telescope: " .. tostring(err), vim.log.levels.WARN)
+    end
+
+    builtin.find_files()
+end
+
+local function open_fff_git_root_or_telescope()
+    local ok, fff = pcall(require, "fff")
+    if ok and fff and fff.find_in_git_root then
+        local call_ok, err = pcall(fff.find_in_git_root)
+        if call_ok then
+            return
+        end
+        vim.notify("fff git-root picker failed, falling back to Telescope: " .. tostring(err), vim.log.levels.WARN)
+    end
+
+    builtin.grep_string({})
+end
+
+vim.keymap.set("n", "<leader>ff", open_fff_files_or_telescope, {
+    desc = "Find files (FFF fallback Telescope)",
+})
+
 vim.keymap.set("n", "<leader>fo", builtin.oldfiles)
 vim.keymap.set("n", "<leader>fq", builtin.quickfix)
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" })
+
 vim.keymap.set("n", "<leader>fg", function()
     builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end)
+
 vim.keymap.set("n", "<leader>fc", function()
     builtin.grep_string({ search = vim.fn.expand("%:t:r") })
 end, { desc = "Find current file" })
-vim.keymap.set("n", "<leader>fs", function()
-    builtin.grep_string({})
-end, { desc = "Find current string" })
+
+vim.keymap.set("n", "<leader>fs", open_fff_git_root_or_telescope, {
+    desc = "Find in git root (FFF fallback Telescope)",
+})
+
 vim.keymap.set("n", "<leader>fi", function()
     builtin.find_files({ cwd = "~/.config/nvim/" })
 end)
 
--- WFF keybindings - try both methods
 vim.keymap.set("n", "<leader>fw", function()
-    -- Try to get the extension from telescope
     local telescope = require("telescope")
     if telescope.extensions and telescope.extensions.wff and telescope.extensions.wff.wff then
         telescope.extensions.wff.wff()
     else
-        -- Try direct require
         local ok, wff = pcall(require, "telescope._extensions.wff")
         if ok and wff and wff.exports and wff.exports.wff then
             wff.exports.wff()

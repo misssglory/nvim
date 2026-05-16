@@ -20,5 +20,6 @@ return {
     "kkoomen/vim-doge",
     "captbaritone/better-indent-support-for-php-with-html",
     "tpope/vim-commentary",
+    "dmtrKovalenko/fff.nvim",
     -- wff is not a plugin to clone - it's a system binary
 }
